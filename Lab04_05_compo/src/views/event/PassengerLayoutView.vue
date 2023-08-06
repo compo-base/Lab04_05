@@ -27,7 +27,8 @@ PassengerServiece.getEventById(Number(props.id))
     <div id="nav">
       <router-link :to="{ name: 'passenger-detail', params: { id } }">Detail | </router-link>
       <router-link :to="{ name: 'passenger-airline', params: { id } }">Airline | </router-link>
-      <router-link :to="{ name: 'event-other', params: { id } }">Other | </router-link>
+      <router-link :to="{ name: 'event-edit', params: { id } }">Edit | </router-link>
+      <router-link :to="{ name: 'event-other', params: { id } }">Other </router-link>
     </div>
     <RouterView :event="event"></RouterView>
   </div>

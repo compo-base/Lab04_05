@@ -4,6 +4,7 @@ import PassengerDetailView from '@/views/PassengerDetailView.vue'
 import PassengerLayout from '@/views/event/PassengerLayoutView.vue'
 import PassengerAirlineView from '@/views/event/PassengerAirlineView.vue'
 import PassengerOtherView from '@/views/event/PassengerOtherView.vue'
+import PassengerEditView from '@/views/event/PaaengerEditView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import NotHaveBrows from '@/views/NotHaveBrows.vue'
 const router = createRouter({
@@ -36,6 +37,12 @@ const router = createRouter({
           path: 'other',
           name: 'event-other',
           component: PassengerOtherView,
+          props: true
+        },
+        {
+          path: 'edit',
+          name: 'event-edit',
+          component: PassengerEditView,
           props: true
         }
       ]
