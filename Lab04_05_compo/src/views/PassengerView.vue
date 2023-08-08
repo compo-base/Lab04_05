@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import type { PassengerInfo } from '@/type'
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import type { Ref } from 'vue'
 import PassengerService from '@/services/PassengerService'
 import PassengerCard from '@/components/PassengerCard.vue'
 import NProgress from 'nprogress'
 import { useRouter } from 'vue-router'
-import { onBeforeRouteUpdate } from 'vue-router'
+import type { AxiosResponse } from 'axios'
+// const eventsPerPage = ref(2)
 
 const router = useRouter()
 const passengers: Ref<Array<PassengerInfo>> = ref([])
-
+const totalEvent = ref<number>(0)
 const props = defineProps({
   page: {
     type: Number,
@@ -20,8 +21,9 @@ const props = defineProps({
 NProgress.start()
 watchEffect(() => {
   PassengerService.getEvent(5, props.page)
-    .then((response) => {
+    .then((response: AxiosResponse<PassengerInfo[]>) => {
       passengers.value = response.data
+      totalEvent.value = response.headers['x-total-count']
     })
     .catch(() => {
       router.push({ name: 'NetworkError' })
@@ -29,6 +31,10 @@ watchEffect(() => {
     .finally(() => {
       NProgress.done()
     })
+})
+const hasNextPages = computed(() => {
+  const totalPages = Math.ceil(totalEvent.value / 5)
+  return props.page.valueOf() < totalPages
 })
 </script>
 
@@ -39,5 +45,23 @@ watchEffect(() => {
       :key="passenger.id"
       :passenger="passenger"
     ></PassengerCard>
+    <div class="pagination">
+      <RouterLink
+        :to="{ name: 'passenger', query: { page: page - 1 } }"
+        rel="prev"
+        v-if="page != 1"
+        id="page-prev"
+      >
+        Prev page
+      </RouterLink>
+      <RouterLink
+        :to="{ name: 'passenger', query: { page: page + 1 } }"
+        rel="next"
+        v-if="hasNextPages"
+        id="page-next"
+      >
+        Next page
+      </RouterLink>
+    </div>
   </main>
 </template>

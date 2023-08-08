@@ -16,7 +16,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'passenger',
-      component: PassengerView
+      component: PassengerView,
+      props: (route) => ({ page: parseInt((route.query?.page as string) || '1') })
     },
     {
       path: '/passenger/:id',
