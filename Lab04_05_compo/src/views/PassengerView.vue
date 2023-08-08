@@ -7,7 +7,7 @@ import PassengerCard from '@/components/PassengerCard.vue'
 import NProgress from 'nprogress'
 import { useRouter } from 'vue-router'
 import type { AxiosResponse } from 'axios'
-// const eventsPerPage = ref(2)
+const eventsPerPage = ref(5)
 
 const router = useRouter()
 const passengers: Ref<Array<PassengerInfo>> = ref([])
@@ -18,9 +18,10 @@ const props = defineProps({
     required: true
   }
 })
+
 NProgress.start()
 watchEffect(() => {
-  PassengerService.getEvent(5, props.page)
+  PassengerService.getEvent(eventsPerPage.value, props.page)
     .then((response: AxiosResponse<PassengerInfo[]>) => {
       passengers.value = response.data
       totalEvent.value = response.headers['x-total-count']
@@ -33,13 +34,17 @@ watchEffect(() => {
     })
 })
 const hasNextPages = computed(() => {
-  const totalPages = Math.ceil(totalEvent.value / 5)
+  const totalPages = Math.ceil(totalEvent.value / eventsPerPage.value)
   return props.page.valueOf() < totalPages
 })
 </script>
 
 <template>
   <main class="container">
+    <div class="events-input">
+      <label for="events-per-page">Events per page:</label>
+      <input type="number" id="events-per-page" v-model.number="eventsPerPage" />
+    </div>
     <PassengerCard
       v-for="passenger in passengers"
       :key="passenger.id"
